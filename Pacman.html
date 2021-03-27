@@ -1,0 +1,849 @@
+<html>
+    <head>
+        <title>Pacman</title>
+        <style type="text/css">
+            *{
+                padding: 0px;
+                margin: 0px;
+            }
+
+            body{
+                background-color: black;
+            }
+
+            div.row div{
+                width: 40px;
+                height: 40px;
+                display: inline-block;
+            }
+
+            div.brick{
+                background: url('img/brick.jpg');
+                background-size: cover;
+                
+            }
+
+            div.coin{
+                background: url('img/coin_001.gif');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+
+            div.cherry{
+                background: url('img/cherry.png');
+                background-position: center;
+                background-size: cover;
+            }
+
+            div#pacman{
+                background: url('img/pacman_001.gif');
+                background-size: cover;
+                background-position: center;
+                height: 26px;
+                width: 26px;
+                margin: 7px;
+                position: absolute;
+            }
+
+            div#ghostA{
+                background: url('img/redGhost.gif');
+                background-position: center;
+                background-size: cover;
+                position: absolute;
+                height: 40px;
+                width: 40px;
+                margin: 2px;
+            }
+
+            div#ghostB{
+                background: url('img/ghost.gif');
+                background-position: center;
+                background-size: cover;
+                position: absolute;
+                height: 30px;
+                width: 30px;
+                margin: 5px;
+            }
+
+            div#ghostC{
+                background: url('img/ghost.gif');
+                background-position: center;
+                background-size: cover;
+                position: absolute;
+                height: 30px;
+                width: 30px;
+                margin: 2px;
+            }
+            
+            div#score{
+                color: white;
+                font-size: 25px;
+                position: absolute;
+                left: 550px;
+                top: 570px;
+            }
+
+            div#text{
+                color: white;
+                font-size: 25px;
+                position: absolute;
+                left: 480px;
+                top: 570px;
+            }
+
+        </style>
+    </head>
+    <body>
+        
+        <div id="container">
+            <div id="pacman"></div>
+            <div id="ghostB"></div>
+            <div id="ghostA"></div>
+            <div id="ghostC"></div>
+            <div id="world"></div>
+            <div id="text">Score: </div>
+            <div id="score">0</div>
+        </div>
+        
+        <script>
+            
+            var world = [
+                [
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                [2,0,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,2],
+                [2,1,2,1,1,1,2,2,2,1,2,2,2,1,2,1,2,2,2,1,2,2,2,1,1,1,2,1,2],
+                [2,1,1,1,2,1,2,3,1,1,1,1,1,1,2,1,1,1,1,1,1,3,2,1,2,1,1,1,2],
+                [2,2,1,2,2,1,1,1,2,1,2,2,2,1,2,1,2,2,2,1,2,1,1,1,2,2,1,2,2],
+                [2,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,2],
+                [2,1,2,1,2,1,2,1,2,1,2,2,2,1,2,1,2,2,2,1,2,1,2,1,2,1,2,1,2],
+                [2,1,2,1,2,1,2,1,2,1,2,2,2,1,2,1,2,2,2,1,2,1,2,1,2,1,2,1,2],
+                [2,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,2],
+                [2,2,1,2,2,1,1,1,2,1,2,2,2,1,2,1,2,2,2,1,2,1,1,1,2,2,1,2,2],
+                [2,1,1,1,2,1,2,3,1,1,1,1,1,1,2,1,1,1,1,1,1,3,2,1,2,1,1,1,2],
+                [2,1,2,1,1,1,2,2,2,1,2,2,2,1,2,1,2,2,2,1,2,2,2,1,1,1,2,1,2],
+                [2,3,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,3,2],
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+                ],
+               
+                [
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                [2,0,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,2],
+                [2,2,2,1,2,2,2,1,2,1,2,2,2,1,2,2,2,1,2,2,2,2,2,2,1,2,2,1,2],
+                [2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,2,1,2],
+                [2,1,2,2,2,1,2,1,2,1,2,2,2,1,2,1,2,2,2,1,2,2,2,2,2,1,1,1,2],
+                [2,1,1,1,1,1,2,1,2,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,2],
+                [2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,2,2,1,2,1,2,1,2],
+                [2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,1,2,1,2,1,2,1,2],
+                [2,1,1,1,2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,2,1,2,1,2,1,1,1,2],
+                [2,1,2,2,2,1,2,1,2,1,2,2,2,2,2,2,2,2,2,1,2,1,2,1,2,1,2,1,2],
+                [2,1,1,3,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,2,1,2],
+                [2,1,2,1,2,2,2,2,2,1,2,1,2,2,2,2,2,1,2,1,2,1,2,2,2,2,2,1,2],
+                [2,1,2,1,1,1,1,1,1,1,2,1,1,3,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2],
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+                ],
+                
+                [
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                [2,0,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2],
+                [2,1,2,2,2,1,2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,2,2,1,2,2,2,1,2],
+                [2,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,2,1,2],
+                [2,1,2,1,2,2,1,2,1,2,2,2,2,1,2,1,2,2,2,2,1,2,1,2,2,1,2,1,2],
+                [2,1,1,1,2,1,1,2,1,2,1,1,1,1,2,1,1,1,1,2,1,2,1,1,2,1,1,1,2],
+                [2,1,2,1,2,1,2,2,1,2,1,2,2,1,2,1,2,2,1,2,1,2,2,1,2,1,2,1,2],
+                [2,1,2,1,2,1,2,2,1,2,1,2,2,1,2,1,2,2,1,2,1,2,2,1,2,1,2,1,2],
+                [2,1,1,1,2,1,1,2,1,2,1,1,1,3,2,1,1,1,1,2,1,2,1,1,2,1,1,1,2],
+                [2,1,2,1,2,2,1,2,1,2,2,2,2,1,2,1,2,2,2,2,1,2,1,2,2,1,2,1,2],
+                [2,1,2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,2,1,2],
+                [2,1,2,2,2,1,2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,2,2,1,2,2,2,1,2],
+                [2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2],
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+                ],
+
+                [
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                [2,0,1,1,1,1,1,1,1,1,2,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,2],
+                [2,2,2,1,2,2,2,2,2,1,2,1,2,2,2,2,2,1,2,3,2,2,2,1,2,1,2,2,2],
+                [2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,2,1,1,1,2,1,1,1,2],
+                [2,1,2,1,2,1,2,1,2,1,2,1,2,2,2,2,2,1,2,1,2,1,2,2,2,2,2,1,2],
+                [2,1,2,1,2,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2],
+                [2,1,2,1,1,1,2,1,2,1,2,2,2,1,2,2,2,1,2,1,2,1,2,1,2,2,2,1,2],
+                [2,1,2,1,2,2,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,2,1,1,1,2,1,2],
+                [2,1,2,1,1,1,2,1,1,1,2,3,1,1,1,1,2,1,1,1,1,1,2,1,2,1,2,1,2],
+                [2,2,2,2,2,1,2,1,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,1,2,1,2,1,2],
+                [2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,2],
+                [2,1,2,2,2,2,2,1,2,1,1,2,1,2,2,2,2,2,2,2,2,2,2,1,2,2,2,1,2],
+                [2,3,1,1,1,1,1,1,1,1,1,2,1,1,1,3,1,2,1,1,1,1,1,1,2,1,1,1,2],
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+                ],
+                
+                [
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+                [2,0,1,1,1,1,1,1,1,1,1,1,1,3,2,1,1,1,2,3,1,1,1,1,2,1,1,3,2],
+                [2,1,2,2,2,1,2,2,2,2,1,2,1,2,2,2,2,1,2,2,2,2,2,1,2,1,2,2,2],
+                [2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,2],
+                [2,1,2,1,2,2,2,2,2,1,2,2,2,1,2,1,2,1,2,2,2,2,2,1,2,1,2,1,2],
+                [2,1,2,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,2,1,1,3,2,1,1,1,2,1,2],
+                [2,1,2,2,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,2,2,1,2],
+                [2,1,1,1,1,1,2,1,2,1,2,1,2,1,2,3,2,1,2,1,2,1,2,1,1,1,2,1,2],
+                [2,1,2,2,2,1,2,1,2,1,1,1,2,1,2,2,2,1,2,1,1,1,1,1,2,1,2,1,2],
+                [2,1,1,1,1,1,2,1,2,2,2,2,2,1,2,1,2,1,2,2,2,2,2,1,2,1,1,1,2],
+                [2,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,2],
+                [2,1,2,1,2,2,2,2,2,2,1,2,1,2,2,2,2,2,2,1,2,2,2,2,2,1,2,1,2],
+                [2,3,1,1,2,3,1,1,1,1,1,2,1,1,1,1,1,3,2,1,1,1,1,1,1,1,1,1,2],
+                [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+                ]
+            ];
+            
+            var move;
+            var side = 'right';
+            var num = randomPick();;
+            var face = 0;
+            var score = 0;
+            var ghostBDirection = 'up';
+            var bumped = 0;
+            var skip = 'no';
+            var cornered = 2;
+            var ghostBCornered = 1;
+            var ghostCCornered = 1;
+            var arrowClicked;
+            var pacman = {
+                x: 1,
+                y: 1
+            }
+            var ghostA = {
+                x: 1,
+                y: 27
+            }
+            var ghostB = {
+                x: 12,
+                y: 27
+            }
+            var ghostC = {
+                x: 10,
+                y: 3
+            }
+
+
+            setInterval(ghostMovement, 500);
+            setInterval(ghostBMovement, 500);
+            setInterval(ghostCMovement, 500);
+            displayPacman();
+            displayGhost();
+            displayWorld();
+
+
+            function randomPick(){
+                var x = Math.floor(Math.random()*5);
+                return x;
+            }
+
+          
+            function displayWorld(){
+                var output = '';
+                
+                for(var i=0; i<world[num].length; i++){
+                    output += "\n<div class='row'>\n";
+                    for(var j=0; j<world[num][i].length; j++){
+                        if(world[num][i][j] == 2){
+                            output += "<div class='brick'></div>";
+                        }else if(world[num][i][j] == 1){
+                            output += "<div class='coin'></div>";
+                        }else if(world[num][i][j] == 3){
+                            output += "<div class='cherry'></div>"
+                        }
+                        else if(world[num][i][j] == 0){
+                            output += "<div class='empty'></div>";
+                        }
+                    }
+                    output += "\n</div>";
+                }
+                document.getElementById('world').innerHTML = output;
+            }
+            console.log(displayWorld());
+
+            
+            function displayPacman(){   
+                document.getElementById('pacman').style.top = pacman.x*40+"px";
+                document.getElementById('pacman').style.left = pacman.y*40+"px";
+            }
+            
+
+            function displayGhost(){
+                document.getElementById('ghostA').style.top = ghostA.x*40+"px";
+                document.getElementById('ghostA').style.left = ghostA.y*40+"px";
+                document.getElementById('ghostB').style.top = ghostB.x*40+"px";
+                document.getElementById('ghostB').style.left = ghostB.y*40+"px";
+                document.getElementById('ghostC').style.top = ghostC.x*40+"px";
+                document.getElementById('ghostC').style.left = ghostC.y*40+"px";
+            }
+
+
+            function updateScore(){  
+                           
+                if(world[num][pacman.x][pacman.y] == 1){
+                    score += 10;
+                    document.getElementById('score').innerHTML = score;
+                }
+                
+                else if(world[num][pacman.x][pacman.y] == 3){
+                    score += 20;
+                    document.getElementById('score').innerHTML = score;
+                }
+                if(score == 2040){
+                    location.reload();
+                }
+            }
+
+            
+            function changeFaceDirection(){ 
+                if(arrowClicked == 'right'){
+                    document.getElementById('pacman').style.transform = "rotate(0deg)";
+                }
+                if(arrowClicked == 'left'){
+                    document.getElementById('pacman').style.transform = "rotate(180deg)";
+                }
+                if(arrowClicked == 'up'){
+                    document.getElementById('pacman').style.transform = "rotate(-90deg)";
+                }
+                if(arrowClicked == 'down'){
+                    document.getElementById('pacman').style.transform = "rotate(90deg)";
+                }
+            }
+            
+
+            function continuousMovement(){  
+                move = setInterval(pacmanMovement, 200);
+            }
+
+            
+            function pacmanMovement(){       
+                if(arrowClicked == 'right'){
+                    if(world[num][pacman.x][pacman.y+1] !=2){
+                        changeFaceDirection('right');
+                        pacman.y++;
+                    }
+                }
+                
+                if(arrowClicked == 'left'){
+                    if(world[num][pacman.x][pacman.y-1] !=2){
+                        changeFaceDirection('left');
+                        pacman.y--;
+                    }
+                }
+                
+                if(arrowClicked == 'down'){
+                    if(world[num][pacman.x+1][pacman.y] !=2){
+                        changeFaceDirection('down');
+                        pacman.x++;
+                    }
+                }
+                
+                if(arrowClicked == 'up'){
+                    if(world[num][pacman.x-1][pacman.y] !=2){
+                        changeFaceDirection('up');
+                        pacman.x--;
+                    }
+                }
+                
+                if(world[num][pacman.x][pacman.y] == 1 || world[num][pacman.x][pacman.y] == 3){
+                    updateScore();
+                    world[num][pacman.x][pacman.y] = 0;
+                    displayWorld();
+                    displayPacman();
+                }
+                displayPacman();
+            }
+
+
+            function ghostMovement(){
+
+                // Top left
+                if(pacman.x < ghostA.x && pacman.y < ghostA.y){   
+                    if(cornered == 2){
+                        if(world[num][ghostA.x][ghostA.y-1] != 2){ 
+                            console.log('Ghost red: moving left');   
+                            ghostA.y--;
+                        }
+                        else if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost red: moving up');
+                            ghostA.x--;
+                        }
+                        else{
+                            cornered = 1;
+                            console.log('Top and left are blocked');
+                        }
+                    }
+                    
+                    else if(cornered == 3){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost red: moving up');
+                            ghostA.x--;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost red: moving right');
+                            ghostA.y++;
+                        }
+                    }
+
+                    else if(cornered == 4){
+                        if(world[num][ghostA.x][ghostA.y-1] != 2){
+                            console.log('Ghost red: moving left');
+                            ghostA.y--;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost red: moving');
+                            ghostA.x++;
+                        }
+                    }
+
+                    else if(cornered == 1){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Moving up');
+                            ghostA.x--;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Looking for open space above');
+                            ghostA.y++;
+                        }else{
+                            console.log('Top and Right are blocked');
+                            ghostA.x++;
+                            cornered = 5;
+                        }
+                    }
+
+                    else if(cornered == 5){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Moving Right');
+                            ghostA.y++;
+                            cornered = 1;
+                        }
+                        else if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Lookig for open space at right');
+                            ghostA.x++;
+                        }
+                    }
+                }
+
+                    // top same y - axis 
+                else if(pacman.x < ghostA.x && pacman.y == ghostA.y){
+                    if(side == 'right'){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Pacman: above');
+                            ghostA.x--;
+                        }else if(world[num][ghostA.x][ghostA.y+1]){
+                            console.log('moving right');
+                            ghostA.y++;
+                            cornered = 3;
+                        }
+                    }
+                    else if(side == 'left'){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Pacman: above');
+                            ghostA.x--;
+                        }else if(world[num][ghostA.x][ghostA.y-1]){
+                            console.log('Ghost A: moving left');
+                            ghostA.y++;
+                            cornered = 3;
+                        }
+                    }
+                    
+                }
+                
+
+                // Left same x - axis 
+                else if(pacman.x == ghostA.x && pacman.y < ghostA.y){
+                    if(cornered != 4){
+                        if(world[num][ghostA.x][ghostA.y-1] != 2){
+                            console.log('Pacman: left');
+                            ghostA.y--;
+                        }
+                        else if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('moving down');
+                            ghostA.x++;
+                            cornered = 4;
+                        }
+                        else{
+                            console.log('Left and down are blocked');
+
+                            cornered = 4;
+                        }
+                    }
+                    else if(cornered == 4){
+                        if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Moving down');
+                            ghostA.x++;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Moving right');
+                            ghostA.y++;
+                        }
+                    }
+                }
+
+
+                //bottom right
+                else if(pacman.x > ghostA.x && pacman.y < ghostA.y){
+                    if(cornered == 2){
+                        if(world[num][ghostA.x][ghostA.y-1] != 2){
+                            console.log('Ghost A: moving left');
+                            ghostA.y--;
+                        }else if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost A: moving down');
+                            ghostA.x++;
+                        }else{
+                            console.log('Left and Down are Blocked');
+                            cornered = 3;
+                        }
+                    }
+                    else if(cornered == 3){
+                        if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost A: moving down');
+                            ghostA.x++;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y+1] !=2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                        }
+                        else{
+                            console.log('Left and Down are Blocked');
+                            cornered = 4;
+                        }
+                    }
+
+                    else if(cornered == 4){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                        }
+                        else if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                        }
+                        else{
+                            console.log('Ghost A: top and right are blocked');
+                            cornered = 2;
+                        }
+                    }
+                }
+
+
+                //below same y - axis
+                else if(pacman.x > ghostA.x && pacman.y == ghostA.y){
+                    if(cornered == 2){
+                        if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost A: moving down');
+                            ghostA.x++;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                            cornered = 3;
+                        }
+                        else{
+                            console.log('Ghost A: bottom and right are blocked');
+                            cornered = 4;
+                        }
+                    }
+                    else if(cornered == 4){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                            cornered = 3;
+                        }
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                        }
+                    }
+                }
+
+
+                //bottom left
+                else if(pacman.x > ghostA.x && pacman.y > ghostA.y){  
+                    if(cornered == 2){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                        }
+                        else if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost A: moving down');
+                            ghostA.x++;
+                        }else{
+                            console.log('Ghost A: right and bottom are blocked');
+                            cornered = 1;
+                        }
+                    }
+
+                    else if(cornered == 1){
+                        if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost A: moving down');
+                            ghostA.x++;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y-1] != 2){
+                            console.log('Ghost A: moving left');
+                            ghostA.y--;
+                        }
+                        else{
+                            console.log('Ghost A: left and bottom are blocked');
+                            cornered = 3;
+                        }
+                    }
+
+                    else if(cornered == 3){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                        }
+                        else{
+                            console.log('Ghost A: top and right are blocked');
+                            cornered = 2;
+                        }
+                    }
+
+                    else if(cornered == 4){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                        }
+                        else{
+                            console.log('Ghost A: top and right are blocked');
+                            cornered = 1;
+                        }
+                    }
+                }
+
+
+                //Right same x - axis
+                else if(pacman.x == ghostA.x && pacman.y > ghostA.y){
+                    if(cornered == 2){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Ghost A: moving right');
+                            ghostA.y++;
+                        }
+                        else if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                            cornered = 4;
+                        }
+                        else{
+                            console.log('Ghost A: roght and top are blocked');
+                            cornered = 1;
+                        }
+                    }
+
+                    
+                    else if(cornered == 1){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                            cornered = 4;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y-1]){
+                            console.log('Ghost A: moving left');
+                            ghostA.y--;
+                        }
+                    }
+                    
+                }
+
+
+                //top right
+                else if(pacman.x < ghostA.x && pacman.y > ghostA.y){  
+                    side = 'left';
+                    if(cornered == 2){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){ 
+                            console.log('Ghost A: moving right');   
+                            ghostA.y++;
+                        }
+                        else if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                        }
+                        else{
+                            cornered = 1;
+                            console.log('Ghost A: top and right are blocked');
+                        }
+                    }
+
+                    else if(cornered == 1){
+                        if(world[num][ghostA.x-1][ghostA.y] != 2){
+                            console.log('Ghost A: moving up');
+                            ghostA.x--;
+                            cornered = 2;
+                        }
+                        else if(world[num][ghostA.x][ghostA.y-1] != 2){
+                            console.log('Ghost A: moving left');
+                            ghostA.y--;
+                        }else{
+                            console.log('Ghost A: top and rght are blocked');
+                            cornered = 3;
+                        }
+                    }
+                    
+                    else if(cornered == 3){
+                        if(world[num][ghostA.x][ghostA.y+1] != 2){
+                            console.log('Moving Right');
+                            ghostA.y++;
+                            cornered = 1;
+                        }
+                        else if(world[num][ghostA.x+1][ghostA.y] != 2){
+                            console.log('Ghost A: moving down');
+                            ghostA.x++;
+                        }
+                    }
+                }
+
+
+                if(ghostA.x == pacman.x && ghostA.y == pacman.y){
+                    location.reload();
+                }
+                displayGhost();
+            }
+
+
+            function ghostBMovement(){
+                if(ghostBCornered == 1){
+                    if(world[num][ghostB.x][ghostB.y-1] != 2){
+                        ghostB.y--;
+                    }
+                    else if(world[num][ghostB.x-1][ghostB.y] != 2){
+                        ghostB.x--;
+                    }
+                    else{
+                        ghostBCornered = 2;
+                    }
+                }
+
+                else if(ghostBCornered == 2){
+                    if(world[num][ghostB.x-1][ghostB.y] != 2){
+                        ghostB.x--;
+                    }
+                    else if(world[num][ghostB.x][ghostB.y+1] != 2){
+                        ghostB.y++;
+                    }
+                    else{
+                        ghostBCornered = 3;
+                    }
+                }
+
+                else if(ghostBCornered == 3){
+                    if(world[num][ghostB.x+1][ghostB.y] != 2){
+                        ghostB.x++;
+                    }else if(world[num][ghostB.x][ghostB.y-1] != 2){
+                        ghostB.y--;
+                    }
+                    else{
+                        ghostBCornered = 1;
+                    }
+                }
+
+                if(ghostB.x == pacman.x && ghostB.y == pacman.y){
+                    location.reload();
+                }
+            }
+            
+
+            function ghostCMovement(){
+                if(ghostCCornered == 1){
+                    if(world[num][ghostC.x][ghostC.y+1] != 2){
+                        ghostC.y++;
+                    }
+                    else if(world[num][ghostC.x-1][ghostC.y] != 2){
+                        ghostC.x--;
+                    }
+                    else{
+                        ghostCCornered = 2;
+                    }
+                }
+
+                else if(ghostCCornered == 2){
+                    if(world[num][ghostC.x-1][ghostC.y] != 2){
+                        ghostC.x--;
+                    }
+                    else if(world[num][ghostC.x][ghostC.y-1] != 2){
+                        ghostC.y--;
+                    }
+                    else{
+                        ghostCCornered = 3;
+                    }
+                }
+
+                else if(ghostCCornered == 3){
+                    if(world[num][ghostC.x+1][ghostC.y] != 2){
+                        ghostC.x++;
+                    }else if(world[num][ghostC.x][ghostC.y+1] != 2){
+                        ghostC.y++;
+                    }
+                    else{
+                        ghostCCornered = 1;
+                    }
+                }
+
+                if(ghostC.x == pacman.x && ghostC.y == pacman.y){
+                    location.reload();
+                }
+            }
+
+
+            document.onkeydown = function(e){
+                
+                if(e.keyCode == 39){ 
+                    if(world[num][pacman.x][pacman.y+1] != 2){
+                        arrowClicked = 'right';
+                        clearInterval(move);
+                        continuousMovement();
+                    }
+                    else{
+                        console.log('you hit a wall');
+                    }
+                }
+
+                else if(e.keyCode == 37){
+                    if(world[num][pacman.x][pacman.y-1] != 2){
+                        arrowClicked = 'left'; 
+                        clearInterval(move);
+                        continuousMovement();
+                    }else{
+                        console.log('you hit a wall');
+                    }
+                }
+
+                else if(e.keyCode == 38){
+                    if(world[num][pacman.x-1][pacman.y] != 2){
+                        arrowClicked = 'up';
+                        clearInterval(move);
+                        continuousMovement();
+                    }else{
+                        console.log('you hit a wall');
+                    }
+                }
+
+                else if(e.keyCode == 40){
+                    if(world[num][pacman.x+1][pacman.y] != 2){
+                        arrowClicked = 'down';
+                        clearInterval(move);
+                        continuousMovement();
+                    }else{
+                        console.log('you hit a wall');
+                    }   
+                }
+            }
+            
+        </script>
+    </body>
+</html>
